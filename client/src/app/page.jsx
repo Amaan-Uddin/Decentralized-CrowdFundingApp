@@ -1,72 +1,58 @@
-import Image from 'next/image';
+import Image from 'next/image'
 
-import { Card } from '@/components';
-import Logo from '../../public/Logo.png';
+import { Card } from '@/components'
+import Logo from '../../public/Logo.png'
 
 const fetchCampaigns = async () => {
 	const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/campaigns`, {
 		method: 'GET',
 		cache: 'no-cache',
-	});
-	const data = await res.json();
-	console.log(data);
-	var campaigns = data.campaigns;
+	})
+	const data = await res.json()
+	var campaigns = data.campaigns
 
-	if (!campaigns) campaigns = [];
+	if (!campaigns) campaigns = []
 
-	campaigns.sort((a, b) => b.collectedAmount - a.collectedAmount);
-	const tops = campaigns.slice(0, 9);
+	campaigns.sort((a, b) => b.collectedAmount - a.collectedAmount)
 
-	const donationCount = campaigns.reduce(
-		(total, campaign) => total + campaign.donations.length,
-		0
-	);
-	return { campaigns: tops, donationCount };
-};
+	const tops = campaigns.slice(0, 9)
+	const donationCount = campaigns.reduce((total, campaign) => total + campaign.donations.length, 0)
+
+	return { campaigns: tops, donationCount, campaignCount: campaigns.length }
+}
 
 const fetchTotalCollected = async () => {
 	const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/total`, {
 		method: 'GET',
 		cache: 'no-cache',
-	});
-	const data = await res.json();
-	console.log(data);
-	return data.total || 0;
-};
+	})
+	const data = await res.json()
+	return data.total || 0
+}
 
 const Home = async () => {
-	const totalCollected = await fetchTotalCollected();
-	const { campaigns, donationCount } = await fetchCampaigns();
+	const totalCollected = await fetchTotalCollected()
+	const { campaigns, campaignCount, donationCount } = await fetchCampaigns()
+
 	return (
 		<div>
 			<div className="bg-neutral-800 rounded-lg p-4 md:p-8 w-full mb-8">
 				<div className="flex">
 					<div>
 						<div className="flex items-end gap-4">
-							<Image
-								className="hidden md:block"
-								src={Logo}
-								alt="fundseed"
-								width={50}
-								height={50}
-							/>
-							<h1 className="text-2xl md:text-4xl font-semibold">
-								Welcome to CFUNDS3.0
-							</h1>
+							<Image className="hidden md:block" src={Logo} alt="fundseed" width={50} height={50} />
+							<h1 className="text-2xl md:text-4xl font-semibold">Welcome to CrowdConnect</h1>
 						</div>
 						<p className="text-sm md:text-lg text-neutral-400 mb-8 mt-4">
-							CFUNDS3.0 is a decentralized crowdfunding platform built on Ethereum. It
-							allows anyone to create a campaign and raise funds. What we have
-							achieved so far:
+							CrowdConnect is a decentralized crowdfunding platform built on Ethereum. It allows anyone to
+							create a campaign and raise funds. What we have achieved so far:
 						</p>
 					</div>
 				</div>
 				<div className="flex flex-col sm:flex-row gap-4">
 					<div className="bg-neutral-700 rounded-lg p-4 w-full">
 						<h5 className="text-center mb-2">All Campaigns</h5>
-						<p className="text-2xl font-semibold text-center">
-							{campaigns?.length ?? 0}
-						</p>
+						<p className="text-2xl font-semibold text-center">{campaignCount}</p>
 					</div>
 					<div className="bg-neutral-700 rounded-lg p-4 w-full">
 						<h5 className="text-center mb-2">Total Donations</h5>
@@ -82,9 +68,7 @@ const Home = async () => {
 			{campaigns?.length === 0 ? (
 				<div className="flex flex-col  justify-center gap-4 mt-10">
 					<h1 className="text-4xl font-semibold">No Campaigns Found</h1>
-					<p className="text-lg text-neutral-400">
-						It looks like there are no campaigns created yet.
-					</p>
+					<p className="text-lg text-neutral-400">It looks like there are no campaigns created yet.</p>
 				</div>
 			) : (
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -94,7 +78,7 @@ const Home = async () => {
 				</div>
 			)}
 		</div>
-	);
-};
+	)
+}
 
-export default Home;
+export default Home
